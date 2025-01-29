@@ -8,13 +8,18 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const clientCert = process.env.CLIENT_CERT ? Buffer.from(process.env.CLIENT_CERT, "base64").toString("utf8") : null;
-const clientKey = process.env.CLIENT_KEY ? Buffer.from(process.env.CLIENT_KEY, "base64").toString("utf8") : null;
+const clientCertBase64 = process.env.CLIENT_CERT;
+const clientKeyBase64 = process.env.CLIENT_KEY;
+const clientCertPass = process.env.CLIENT_CERT_PASS;
+
+const clientCert = clientCertBase64 ? Buffer.from(clientCertBase64, "base64").toString("utf8") : null;
+const clientKey = clientKeyBase64 ? Buffer.from(clientKeyBase64, "base64").toString("utf8") : null;
 
 const agent = new https.Agent({
-  rejectUnauthorized: false,
+  rejectUnauthorized: false,  // Ignore SSL errors
   cert: clientCert,
   key: clientKey,
+  passphrase: clientCertPass,
 });
 
 // Proxy route
@@ -25,9 +30,7 @@ app.post("/proxy", async (req, res) => {
     const response = await axios.post(targetUrl, req.body, {
       httpsAgent: agent,
       headers: {
-        "X-Client-Certificate": clientCert,
-        "X-Client-Certificate-Password": process.env.CLIENT_CERT_PASS,
-        "X-Client-Certificate-CN": "MarketingAuto",
+        "X-Client-Certificate-CN": "MarketingAuto",  // Keep only simple headers
         "Content-Type": "application/json"
       }
     });
