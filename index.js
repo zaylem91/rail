@@ -20,10 +20,11 @@ const clientCertPass = process.env.CLIENT_CERT_PASS || "";
 
 // Create HTTPS agent
 const agent = new https.Agent({
-  rejectUnauthorized: false,  // Ignore SSL errors
+  rejectUnauthorized: false, // Ignore self-signed SSL issues
   cert: clientCertPem,
   key: clientKeyPem,
   passphrase: clientCertPass,
+  minVersion: "TLSv1.2", // Force TLS 1.2+
 });
 
 // Proxy route
