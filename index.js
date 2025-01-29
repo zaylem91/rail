@@ -27,27 +27,34 @@ const agent = new https.Agent({
   minVersion: "TLSv1.2", // Force TLS 1.2+
 });
 
-// Proxy route
-app.post("/proxy", async (req, res) => {
+// **DYNAMIC ROUTE for ONCF API**
+app.post("/:apiEndpoint", async (req, res) => {
   try {
-    const targetUrl =
-      "https://41.137.246.219:8446/ONCF_Proxy_Client_Gateway/ProxyService.svc/rest";
+    // Extract API endpoint from URL
+    const { apiEndpoint } = req.params;
+    
+    // Construct the target ONCF API URL
+    const targetUrl = `https://41.137.246.219:8446/ONCF_Proxy_Client_Gateway/ProxyService.svc/rest/${apiEndpoint}`;
+
+    console.log(`🔗 Forwarding request to: ${targetUrl}`);
+    console.log("📨 Request Body:", JSON.stringify(req.body, null, 2));
 
     const response = await axios.post(targetUrl, req.body, {
       httpsAgent: agent,
       headers: {
-        "X-Client-Certificate-CN": "MarketingAuto",  // Remove PEM headers
+        "X-Client-Certificate-CN": "MarketingAuto",
         "Content-Type": "application/json",
       },
     });
 
+    console.log("✅ Response Data:", JSON.stringify(response.data, null, 2));
     res.json(response.data);
   } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error:", error.message, error.response?.data);
+    res.status(500).json({ error: error.message, details: error.response?.data });
   }
 });
 
 // Start server
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Proxy running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Proxy running on port ${PORT}`));
