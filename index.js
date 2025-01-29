@@ -31,7 +31,7 @@ const agent = new https.Agent({
 app.post("/proxy", async (req, res) => {
   try {
     const targetUrl =
-      "https://41.137.246.219:8446/ONCF_Proxy_Client_Gateway/ProxyService.svc/rest/AddCampagne";
+      "https://41.137.246.219:8446/ONCF_Proxy_Client_Gateway/ProxyService.svc/rest";
 
     const response = await axios.post(targetUrl, req.body, {
       httpsAgent: agent,
