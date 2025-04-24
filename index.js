@@ -34,8 +34,8 @@ app.post("/:apiEndpoint", async (req, res) => {
     const { apiEndpoint } = req.params;
     
     // Construct the target ONCF API URL
-    //const targetUrl = `https://41.137.246.219:8446/ONCF_Proxy_Client_Gateway/ProxyService.svc/rest/${apiEndpoint}`;
-     const targetUrl = `https://41.137.136.240:8446/ONCF_Proxy_Client/ProxyService.svc/rest/${apiEndpoint}`;
+    const targetUrl = `https://41.137.246.219:8446/ONCF_Proxy_Client_Gateway/ProxyService.svc/rest/${apiEndpoint}`;
+    //const targetUrl = `https://41.137.136.240:8446/ONCF_Proxy_Client/ProxyService.svc/rest/${apiEndpoint}`;
 
     console.log(`🔗 Forwarding request to: ${targetUrl}`);
     console.log("📨 Request Body:", JSON.stringify(req.body, null, 2));
